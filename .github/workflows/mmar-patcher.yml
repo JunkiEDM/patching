@@ -59,7 +59,7 @@ jobs:
           
           with open(os.environ['GITHUB_ENV'], 'a') as g:
               g.write(f'VERSION={ver}\n')
-              g.write(f'URL={ver}\n')
+              g.write(f'URL={url}\n')
         
       - name: Fetch APK
         id: fetch_apk
