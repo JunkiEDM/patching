@@ -16,14 +16,14 @@ jobs:
       
       - uses: actions/setup-java@v1
         with:
-          java-version: '14'
+          java-version: '17'
           architecture: x64
       
       - name: Setup Environment
         id: setup_environment
         run: |
           wget https://raw.githubusercontent.com/iBotPeaches/Apktool/master/scripts/linux/apktool
-          wget -O apktool.jar https://bitbucket.org/iBotPeaches/apktool/downloads/apktool_2.4.1.jar
+          wget -O apktool.jar https://bitbucket.org/iBotPeaches/apktool/downloads/apktool_2.6.1.jar
           chmod +x apktool
       
       - name: Setup mmpatch
@@ -35,13 +35,13 @@ jobs:
         run: |
           if [[ ! -z "${{ github.event.inputs.version }}" ]]
           then
-            echo "::set-env name=VERSION::${{ github.event.inputs.version }}"
+            echo "VERSION=${{ github.event.inputs.version }}" >> $GITHUB_ENV
           else
             if [[ ! -z "${{ github.event.inputs.url }}" ]]
             then
-              echo "::set-env name=VERSION::url-provided"
+              echo "VERSION=url-provided" >> $GITHUB_ENV
             else
-              echo "::set-env name=VERSION::`git ls-remote --tags https://github.com/topjohnwu/Magisk | grep manager- | awk -F / '{print $NF}' | tail -n 1 | awk -F '-' '{print $2}'`"
+              echo "VERSION=`git ls-remote --tags https://github.com/topjohnwu/Magisk | grep manager- | awk -F / '{print $NF}' | tail -n 1 | awk -F '-' '{print $2}'`" >> $GITHUB_ENV
             fi
           fi
 
