@@ -30,25 +30,10 @@ jobs:
         id: setup_mmpatch
         run: git clone https://github.com/Magisk-Modules-Alt-Repo/mmpatch
 
-      - name: Identify Target Tag
-        id: identify_target_tag
-        run: |
-          if [[ ! -z "${{ github.event.inputs.version }}" ]]
-          then
-            echo "VERSION=${{ github.event.inputs.version }}" >> $GITHUB_ENV
-          else
-            if [[ ! -z "${{ github.event.inputs.url }}" ]]
-            then
-              echo "VERSION=url-provided" >> $GITHUB_ENV
-            else
-              echo "VERSION=`git ls-remote --tags https://github.com/topjohnwu/Magisk | grep manager- | awk -F / '{print $NF}' | tail -n 1 | awk -F '-' '{print $2}'`" >> $GITHUB_ENV
-            fi
-          fi
-
       - name: Fetch APK
         id: fetch_apk
         run: |
-          URL="https://github.com/topjohnwu/Magisk/releases/download/manager-${{ env.VERSION }}/MagiskManager-${{ env.VERSION }}.apk"
+          URL=json.loads(requests.get(f"https://github.com/topjohnwu/magisk-files/raw/master/canary.json").content)['magisk']['link']
           [[ ! -z "${{ github.event.inputs.url }}" ]] && URL="${{ github.event.inputs.url }}"
           wget -O ./mmpatch/MagiskManager.apk "$URL"
       
