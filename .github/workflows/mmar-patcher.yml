@@ -4,10 +4,17 @@ on:
     - cron: '0 */12 * * *'
   workflow_dispatch:
     inputs:
-      version:
-        description: 'Version (blank for latest)'
+      branch:
+        description: "Magisk version"
+        required: true
+        default: "canary"
+        type: choice
+        options:
+        - stable
+        - beta
+        - canary
       url:
-        description: 'URL (blank for stable)'
+        description: 'URL (blank for selected branch)'
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -29,11 +36,16 @@ jobs:
       - name: Setup mmpatch
         id: setup_mmpatch
         run: git clone https://github.com/Magisk-Modules-Alt-Repo/mmpatch
-
+        
+      - name: Identify Target Tag
+        id: identify_target_tag
+        run: |
+          echo "VERSION=${{ github.event.inputs.branch }}-`json.loads(requests.get(f"https://github.com/topjohnwu/magisk-files/raw/master/${{ github.event.inputs.branch }}.json").content)['magisk']['version']`" >> $GITHUB_ENV
+          
       - name: Fetch APK
         id: fetch_apk
         run: |
-          URL=json.loads(requests.get(f"https://github.com/topjohnwu/magisk-files/raw/master/canary.json").content)['magisk']['link']
+          URL=json.loads(requests.get(f"https://github.com/topjohnwu/magisk-files/raw/master/${{ github.event.inputs.branch }}.json").content)['magisk']['link']
           [[ ! -z "${{ github.event.inputs.url }}" ]] && URL="${{ github.event.inputs.url }}"
           wget -O ./mmpatch/MagiskManager.apk "$URL"
       
