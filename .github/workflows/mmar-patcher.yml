@@ -52,7 +52,7 @@ jobs:
           if not branch:
               branch = "stable"
           if branch == "stable" or branch == "beta" or branch == "canary":
-              ver = branch+json.loads(requests.get(f"https://github.com/topjohnwu/magisk-files/raw/master/${{ github.event.inputs.branch }}.json").content)['magisk']['version']
+              ver = branch+"-"+json.loads(requests.get(f"https://github.com/topjohnwu/magisk-files/raw/master/${{ github.event.inputs.branch }}.json").content)['magisk']['version']
           
           if not url:
               url = json.loads(requests.get(f"https://github.com/topjohnwu/magisk-files/raw/master/${{ github.event.inputs.branch }}.json").content)['magisk']['link']
